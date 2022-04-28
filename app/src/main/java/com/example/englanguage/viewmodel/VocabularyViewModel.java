@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -30,7 +31,7 @@ import retrofit2.Response;
 public class VocabularyViewModel extends ViewModel {
     private MutableLiveData<List<SuccessVocabulary>> mListVocabularyLiveData;
     private List<SuccessVocabulary> mListVocabulary = new ArrayList<>();
-    private RecyclerView recyclerView;
+    private RecyclerView recyclerView, recyclerViewSearch;
     private ListVocabularyAdapter adapter;
     private ProgressBar progressBar;
     private LinearLayoutManager layoutManager;
@@ -40,15 +41,12 @@ public class VocabularyViewModel extends ViewModel {
     boolean isLoading = false;
     private Context context;
     private Vocabulary vocabulary;
-    private String WORD;
+    private String search;
 
-    public VocabularyViewModel(List<SuccessVocabulary> mListVocabulary, RecyclerView recyclerView, ListVocabularyAdapter adapter, ProgressBar progressBar, LinearLayoutManager layoutManager, int page, int currentPage, Handler handler, boolean isLoading, Context context, @NonNull Closeable... closeables) {
-        super(closeables);
-
-//MutableLiveData<List<SuccessVocabulary>> mListVocabularyLiveData,
-//        this.mListVocabularyLiveData = mListVocabularyLiveData;
+    public VocabularyViewModel(List<SuccessVocabulary> mListVocabulary, RecyclerView recyclerView, RecyclerView recyclerViewSearch, ListVocabularyAdapter adapter, ProgressBar progressBar, LinearLayoutManager layoutManager, int page, int currentPage, Handler handler, boolean isLoading, Context context, String search) {
         this.mListVocabulary = mListVocabulary;
         this.recyclerView = recyclerView;
+        this.recyclerViewSearch = recyclerViewSearch;
         this.adapter = adapter;
         this.progressBar = progressBar;
         this.layoutManager = layoutManager;
@@ -57,16 +55,7 @@ public class VocabularyViewModel extends ViewModel {
         this.handler = handler;
         this.isLoading = isLoading;
         this.context = context;
-    }
-
-    public VocabularyViewModel() {
-        mListVocabularyLiveData = new MutableLiveData<>();
-        clickGetVocabulary(page);
-        addEventLoad();
-    }
-
-    public MutableLiveData<List<SuccessVocabulary>> getListVocabularyLiveData() {
-        return mListVocabularyLiveData;
+        this.search = search;
     }
 
     public void addEventLoad() {
@@ -113,8 +102,35 @@ public class VocabularyViewModel extends ViewModel {
         }, 2000);
     }
 
+    public void clickSearchVocabulary(String search) {
+        API.api.getVocabulary(1, search).enqueue(new Callback<Vocabulary>() {
+            @Override
+            public void onResponse(Call<Vocabulary> call, Response<Vocabulary> response) {
+                vocabulary = response.body();
+                for (int i = 0; i < vocabulary.getSuccess().size(); i++) {
+                    SuccessVocabulary successVocabulary = new SuccessVocabulary
+                            (vocabulary.getSuccess().get(i).getWord(),
+                            vocabulary.getSuccess().get(i).getMean(),
+                                    vocabulary.getSuccess().get(i).getExample());
+//                    recyclerViewSearch.setAdapter(listVocabularyAdapter);
+                    mListVocabulary.add(successVocabulary);
+                    adapter.setData(mListVocabulary);
+                    recyclerView.setAdapter(adapter);
+                    Log.d("iiiViewModel", String.valueOf(mListVocabulary));
+                    recyclerView.setVisibility(View.GONE);
+                    recyclerViewSearch.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Vocabulary> call, Throwable t) {
+                Toast.makeText(context, "Call api failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     public List<SuccessVocabulary> clickGetVocabulary(int page) {
-        API.api.getVocabulary(1, "").enqueue(new Callback<Vocabulary>() {
+        API.api.getVocabulary(1, search).enqueue(new Callback<Vocabulary>() {
             @Override
             public void onResponse(Call<Vocabulary> call, Response<Vocabulary> response) {
                 vocabulary = response.body();
@@ -122,7 +138,6 @@ public class VocabularyViewModel extends ViewModel {
                 if (adapter == null) {
                     getListVocabulary(vocabulary);
                 } else if (page <= currentPage) {
-                    Log.d("iiiiiii", String.valueOf(page));
                     if (page == 1) {
                         getListVocabularyLoadMore1(vocabulary);
                         Toast.makeText(context, "Page " + page, Toast.LENGTH_SHORT).show();
@@ -138,7 +153,6 @@ public class VocabularyViewModel extends ViewModel {
                     Toast.makeText(context, "Page " + currentPage + " HẾT", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Log.d("iiiiiiiiiii", vocabulary.getSuccess().get(1).getWord());
             }
 
             @Override
@@ -155,6 +169,7 @@ public class VocabularyViewModel extends ViewModel {
                     vocabulary.getSuccess().get(i).getMean(), vocabulary.getSuccess().get(i).getExample());
             mListVocabulary.add(successVocabulary);
             adapter.setData(mListVocabulary);
+            recyclerView.setAdapter(adapter);
         }
         return null;
     }
@@ -169,6 +184,7 @@ public class VocabularyViewModel extends ViewModel {
             adapter.setData(mListVocabulary);
         }
         adapter.notifyItemRangeInserted(vitri, soluongadd);
+        recyclerView.setAdapter(adapter);
         return null;
     }
 
@@ -183,6 +199,7 @@ public class VocabularyViewModel extends ViewModel {
             adapter.setData(mListVocabulary);
         }
         adapter.notifyItemRangeInserted(vitri, soluongadd);
+        recyclerView.setAdapter(adapter);
         return null;
     }
 
@@ -197,6 +214,7 @@ public class VocabularyViewModel extends ViewModel {
             adapter.setData(mListVocabulary);
         }
         adapter.notifyItemRangeInserted(vitri, soluongadd);
+        recyclerView.setAdapter(adapter);
         return null;
     }
 }

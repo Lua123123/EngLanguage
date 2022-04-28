@@ -5,9 +5,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class Success {
 
-    public Success(String name, int soluong) {
+    public Success(String name, int soluong, int id) {
         this.name = name;
         this.soluong = soluong;
+        this.id = id;
     }
 
     @SerializedName("id")

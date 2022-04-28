@@ -3,6 +3,8 @@ package com.example.englanguage.fragmentflipcard2
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,9 +18,12 @@ import com.example.englanguage.databinding.FragmentFlipCard4Binding
 import com.example.englanguage.model.vocabulary.SuccessVocabulary
 import com.example.englanguage.model.vocabulary.Vocabulary
 import com.example.englanguage.network.API
+import com.example.englanguage.viewmodel.FlipViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
 
 class FlipCardFragment4 : Fragment() {
     lateinit var front_anim: AnimatorSet
@@ -26,6 +31,8 @@ class FlipCardFragment4 : Fragment() {
     var isFront = true;
     private lateinit var binding: FragmentFlipCard4Binding
     var vocabulary: Vocabulary? = null
+    private var mTTS: TextToSpeech? = null
+    private val koinViewModel: FlipViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,25 +46,52 @@ class FlipCardFragment4 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        clickGetVocabulary()
         flipCart()
+        callMTTS()
 
+        binding.mButtonSpeak.setOnClickListener {
+            speak()
+        }
+
+        koinViewModel.mutableLiveDataClickGetVocabulary()
+
+        koinViewModel.mVocabulary.observe(this)
+        {
+            binding.cartFront2!!.text = it!!.success.get(3).word
+            binding.cartBehind2!!.text = it!!.success.get(3).mean
+        }
     }
 
-    fun clickGetVocabulary(): List<SuccessVocabulary?>? {
-        API.api.getVocabulary(1, "").enqueue(object : Callback<Vocabulary?> {
-            override fun onResponse(call: Call<Vocabulary?>, response: Response<Vocabulary?>) {
-                vocabulary = response.body()
-                val successVocabulary = SuccessVocabulary(vocabulary?.success?.get(3)?.word.toString(),
-                    vocabulary?.success?.get(3)?.mean.toString(), vocabulary?.success?.get(3)?.example.toString())
-                binding.setVocabularyViewModel(successVocabulary)
-            }
-
-            override fun onFailure(call: Call<Vocabulary?>, t: Throwable) {
-                Toast.makeText(context, "Call api failed", Toast.LENGTH_SHORT).show()
+    private fun callMTTS() {
+        mTTS = TextToSpeech(context, object : TextToSpeech.OnInitListener {
+            override fun onInit(i: Int) {
+                if (i == TextToSpeech.SUCCESS) {
+                    val result = mTTS!!.setLanguage(Locale.GERMAN)
+                    if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e("TTS", "Language not supported")
+                    } else {
+                        binding.mButtonSpeak.setEnabled(true)
+                    }
+                    run { Log.e("TTS", "Initialization failed") }
+                }
             }
         })
-        return null
+    }
+
+    private fun speak() {
+        var text: String? = koinViewModel.mVocabulary.value?.success?.get(3)?.word
+        if (text != null) {
+            Log.d("TTS", text)
+        }
+        var pitch = binding.seekBarPitch.progress.toFloat() / 50
+        if (pitch < 0.1) pitch = 0.1F
+        var speed: Float = binding.seekBarSpeed.progress.toFloat() / 50
+        if (speed < 0.1) speed = 0.1F
+
+        mTTS!!.setPitch(pitch) //pitch
+        mTTS!!.setSpeechRate(speed) //speed
+
+        mTTS!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
     }
 
     private fun flipCart() {

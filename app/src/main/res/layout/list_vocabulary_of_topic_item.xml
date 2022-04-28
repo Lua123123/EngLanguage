@@ -1,37 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#FFDEAD"
-    android:orientation="vertical"
-    android:padding="10dp">
+    android:layout_height="wrap_content">
 
     <LinearLayout
-        android:id="@+id/item_topic"
+        android:id="@+id/layout_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_item_rcv"
         android:orientation="vertical"
-        android:background="@drawable/bg_item_rcv">
-
+        android:padding="10dp"
+        tools:ignore="MissingConstraints">
 
         <TextView
-            android:id="@+id/topic"
+            android:id="@+id/word"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="10dp"
-            android:text="Topic"
+            android:text="Word"
             android:textColor="#131A38"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/amount"
+            android:id="@+id/mean"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="12dp"
-            android:text="Amount"
+            android:text="Mean"
             android:textColor="#FFC107"
-            android:textSize="15sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

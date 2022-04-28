@@ -4,72 +4,44 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable
-            name="VocabularyViewModel"
-            type="com.example.englanguage.model.vocabulary.SuccessVocabulary" />
 
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".fragmentflipcard2.FlipCardFragment6">
+        tools:context=".TextToSpeechActivity">
 
-        <!-- 6 -->
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/flip_layout6"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_marginTop="8.5dp"
+            android:id="@+id/layout_textToSpeech"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:layout_marginBottom="200dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"></androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/cart_front6"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_marginTop="8.5dp"
-            android:background="@drawable/bg_flipcart_item_6_front"
-            android:gravity="center"
-            android:text="@={VocabularyViewModel.word}"
-            android:textAlignment="center"
-            android:textColor="#000000"
-            android:textSize="50sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <EditText
+                android:id="@+id/edt_textToSpeech"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
-            android:id="@+id/cart_behind6"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_marginTop="8.5dp"
-            android:alpha="0"
-            android:background="@drawable/bg_flipcart_item_6_behind"
-            android:gravity="center"
-            android:text="@={VocabularyViewModel.mean}"
-            android:textAlignment="center"
-            android:textSize="30sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/txtPitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="70dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="200dp"
             android:text="Pitch"
             android:textColor="#000000"
             android:textSize="16dp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cart_behind6" />
+            app:layout_constraintTop_toBottomOf="@+id/layout_textToSpeech" />
 
         <SeekBar
             android:id="@+id/seek_bar_pitch"
@@ -114,5 +86,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/seek_bar_speed" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

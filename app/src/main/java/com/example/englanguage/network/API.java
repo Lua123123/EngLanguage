@@ -16,13 +16,14 @@ import retrofit2.http.POST;
 
 public interface API {
 
-    public static final String DOMAIN = "http://192.168.11.94/quanlytuvung/public/api/";
+    public static final String DOMAIN = "http://192.168.11.93/quanlytuvung/public/api/";
     API api = new Retrofit.Builder()
             .baseUrl(DOMAIN) // API base url
             .addConverterFactory(GsonConverterFactory.create()) // Factory phụ thuộc vào format JSON trả về
             .build()
             .create(API.class);
 
+    //USER
     @FormUrlEncoded
     @POST("auth/signup")
     Call<SignUp> postUsers(@Field("email") String email, @Field("password") String password,
@@ -31,13 +32,19 @@ public interface API {
     @POST("auth/login")
     Call<Login> getUsers(@Body UserLogin userLogin);
 
+    //TOPIC
     @FormUrlEncoded
     @POST("topic/getAllTopic")
     Call<Topic> getTopics(@Field("user_create") int user_create);
 
+    //VOCABULARY
     @FormUrlEncoded
     @POST("vocabulary/getVocabulary")
     Call<Vocabulary> getVocabulary(@Field("user_create") int user_create, @Field("search") String search);
+
+    @FormUrlEncoded
+    @POST("vocabulary/getAllVocabularyByUserId")
+    Call<Vocabulary> getVocabularyOfTopic(@Field("user_create") int user_create, @Field("topic_id") int topic_id);
 
 //    @POST("auth/login")
 //    Call<Login> getUsers(@Body String email, @Body String password,

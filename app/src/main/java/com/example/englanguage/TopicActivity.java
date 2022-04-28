@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,12 +27,13 @@ import retrofit2.Response;
 
 public class TopicActivity extends AppCompatActivity {
 
-    private ImageView imgNext;
+    private ImageView listFlipCart, soundTextToSpeech;
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
     private LinearLayoutManager layoutManager;
     private ListTopicAdapter adapter;
     private List<Success> postsList = new ArrayList<>();
+    private Context context = TopicActivity.this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +44,24 @@ public class TopicActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new ListTopicAdapter(postsList);
+        adapter = new ListTopicAdapter(postsList, context);
         recyclerView.setAdapter(adapter);
-        imgNext = findViewById(R.id.imgNext);
-        imgNext.setOnClickListener(new View.OnClickListener() {
+
+        listFlipCart = findViewById(R.id.listFlipCart);
+        listFlipCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(TopicActivity.this, FlipCardActivity1.class);
+                Intent intent = new Intent(TopicActivity.this, FlipCardActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        soundTextToSpeech = findViewById(R.id.soundTextToSpeech);
+        soundTextToSpeech.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent2 = new Intent(TopicActivity.this, TextToSpeechActivity.class);
+                startActivity(intent2);
             }
         });
 
@@ -64,9 +76,9 @@ public class TopicActivity extends AppCompatActivity {
                 Topic topic = response.body();
                 for (int i = 0; i < topic.getSuccess().size(); i++) {
                     Success success = new Success(topic.getSuccess().get(i).getName(),
-                            topic.getSuccess().get(i).getSoluong());
+                            topic.getSuccess().get(i).getSoluong(),
+                            topic.getSuccess().get(i).getId());
                     postsList.add(success);
-                    Log.d("topic", topic.getSuccess().get(i).getSoluong().toString());
                 }
                 adapter.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);

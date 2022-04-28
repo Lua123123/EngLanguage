@@ -1,8 +1,6 @@
 package com.example.englanguage;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,10 +10,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
-import android.widget.AdapterView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -23,39 +19,29 @@ import com.example.englanguage.adapter.ListVocabularyAdapter;
 
 import com.example.englanguage.model.vocabulary.SuccessVocabulary;
 import com.example.englanguage.model.vocabulary.Vocabulary;
-import com.example.englanguage.network.API;
-import com.example.englanguage.viewmodel.SignUpViewModel;
 import com.example.englanguage.viewmodel.VocabularyViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class VocabularyActivity extends AppCompatActivity {
 
     private Context context = VocabularyActivity.this;
-    private RecyclerView recyclerView;
+    private RecyclerView recyclerView, recyclerViewSearch;
     private ListVocabularyAdapter adapter;
     private List<SuccessVocabulary> mListVocabulary = new ArrayList<>();
     private ProgressBar progressBar;
     private LinearLayoutManager layoutManager;
+    private EditText edtSearch;
+    private ImageView imgSearch;
 
     private int page = 1;
     private int currentPage = 3;
     private Handler handler = new Handler();
     boolean isLoading = false;
-    VocabularyViewModel vocabularyViewModel;
-
-    public VocabularyViewModel getVocabularyViewModel() {
-        return vocabularyViewModel;
-    }
-
-    public void setVocabularyViewModel(VocabularyViewModel vocabularyViewModel) {
-        this.vocabularyViewModel = vocabularyViewModel;
-    }
+    private Vocabulary vocabulary;
+    private VocabularyViewModel vocabularyViewModel;
+    private String search = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,29 +49,35 @@ public class VocabularyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_vocabulary);
 
         layoutManager = new LinearLayoutManager(this);
-        adapter = new ListVocabularyAdapter(mListVocabulary, context);
         progressBar = findViewById(R.id.progressBar);
         recyclerView = findViewById(R.id.recyclerView);
+        recyclerViewSearch = findViewById(R.id.recyclerViewSearch);
         recyclerView.setLayoutManager(layoutManager);
+//        recyclerViewSearch.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+        recyclerViewSearch.setAdapter(adapter);
+        adapter = new ListVocabularyAdapter(context);
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         recyclerView.addItemDecoration(itemDecoration);
+        imgSearch = findViewById(R.id.imgSearch);
+        edtSearch = findViewById(R.id.edt_search);
 
-        vocabularyViewModel = new VocabularyViewModel(mListVocabulary, recyclerView,
-                adapter, progressBar, layoutManager, page, currentPage, handler, isLoading, context);
+        vocabularyViewModel = new VocabularyViewModel(mListVocabulary, recyclerView, recyclerViewSearch,
+                adapter, progressBar, layoutManager, page, currentPage, handler, isLoading, context, search);
 
         vocabularyViewModel.clickGetVocabulary(page);
         Toast.makeText(VocabularyActivity.this, "Page 1", Toast.LENGTH_SHORT).show();
         vocabularyViewModel.addEventLoad();
 
-        //livedata
-//        vocabularyViewModel.getListVocabularyLiveData().observe(this, new Observer<List<SuccessVocabulary>>() {
-//            @Override
-//            public void onChanged(List<SuccessVocabulary> successVocabularies) {
-//                adapter = new ListVocabularyAdapter(successVocabularies);
-//                recyclerView.setAdapter(adapter);
-//            }
-//        });
+        imgSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                search = edtSearch.getText().toString().trim();
+                if (search != null) {
+                    vocabularyViewModel.clickSearchVocabulary(search);
+                }
+            }
+        });
     }
 
     @Override

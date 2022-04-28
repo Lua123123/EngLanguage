@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".koin.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -14,10 +15,19 @@
         android:theme="@style/Theme.EngLanguage"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".VocabularyActivity"
+            android:name=".OneVocabularyActivity"
             android:exported="false" />
         <activity
-            android:name=".FlipCardActivity2"
+            android:name=".SignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TextToSpeechActivity"
+            android:exported="false" />
+        <activity
+            android:name=".VocabularyOfTopicActivity"
+            android:exported="false" />
+        <activity
+            android:name=".VocabularyActivity"
             android:exported="false" />
         <activity
             android:name=".TopicActivity"
@@ -26,10 +36,10 @@
             android:name=".LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".FlipCardActivity1"
+            android:name=".FlipCardActivity"
             android:exported="false" />
         <activity
-            android:name=".SignUpActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

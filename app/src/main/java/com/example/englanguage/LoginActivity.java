@@ -2,15 +2,21 @@ package com.example.englanguage;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentManager;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.example.englanguage.databinding.ActivityLoginBinding;
+import com.example.englanguage.fragmentflipcard1.FlipCardFragment1;
 import com.example.englanguage.viewmodel.LoginViewModel;
+
+import java.util.Locale;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -30,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         tv_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, TopicActivity.class);
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });

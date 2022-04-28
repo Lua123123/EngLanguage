@@ -2,21 +2,23 @@ package com.example.englanguage
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.example.englanguage.adapter.ViewPagerAdapterFragment123
-import com.example.englanguage.fragmentflipcard1.FlipCardFragment1
 import com.example.englanguage.model.vocabulary.SuccessVocabulary
-import com.example.englanguage.viewmodel.VocabularyViewModel
+import com.example.englanguage.model.vocabulary.Vocabulary
+import com.example.englanguage.network.API
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class FlipCardActivity1 : AppCompatActivity() {
+class FlipCardActivity : AppCompatActivity() {
 
     private lateinit var mViewPager: ViewPager
     private var navigationView: BottomNavigationView? = null
@@ -25,21 +27,22 @@ class FlipCardActivity1 : AppCompatActivity() {
     private var content_frame: FrameLayout? = null
     private var layoutConstraint: ConstraintLayout? = null
     private lateinit var successVocabulary: SuccessVocabulary
+    private var vocabulary: Vocabulary? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_flip_card1)
+        setContentView(R.layout.activity_flip_card)
 
         navigationView = findViewById(R.id.bottom_nav)
         mViewPager = findViewById<ViewPager>(R.id.view_pager)
         content_frame = findViewById<FrameLayout>(R.id.content_frame)
         layoutConstraint = findViewById<ConstraintLayout>(R.id.layoutConstraint)
 
-        imgNext = findViewById(R.id.imgNext)
-        imgNext?.setOnClickListener {
-            val intent = Intent(this, FlipCardActivity2::class.java)
-            startActivity(intent)
-        }
+//        imgNext = findViewById(R.id.imgNext)
+//        imgNext?.setOnClickListener {
+//            val intent = Intent(this, VocabularyOfTopicActivity::class.java)
+//            startActivity(intent)
+//        }
 
         imgBack = findViewById(R.id.imgBack)
         imgBack?.setOnClickListener {
@@ -47,6 +50,10 @@ class FlipCardActivity1 : AppCompatActivity() {
             startActivity(intent)
         }
         setUpViewPager()
+//        clickGetVocabulary()
+
+        val successVocabulary = SuccessVocabulary(vocabulary?.success?.get(0)?.word.toString(),
+            vocabulary?.success?.get(0)?.mean.toString(), vocabulary?.success?.get(0)?.example.toString())
 
         //LẤY DATA TỪ VOCABULARY ACTIVITY
 //        val bundle = intent.extras ?: return
@@ -73,6 +80,20 @@ class FlipCardActivity1 : AppCompatActivity() {
 //            mViewPager?.setVisibility(View.VISIBLE)
 //            content_frame?.setVisibility(View.GONE)
 //        }
+    }
+
+    ////////////////
+    fun clickGetVocabulary(): List<SuccessVocabulary?>? {
+        API.api.getVocabulary(1, "").enqueue(object : Callback<Vocabulary?> {
+            override fun onResponse(call: Call<Vocabulary?>, response: Response<Vocabulary?>) {
+                vocabulary = response.body()
+            }
+
+            override fun onFailure(call: Call<Vocabulary?>, t: Throwable) {
+                Toast.makeText(this@FlipCardActivity, "Call api failed", Toast.LENGTH_SHORT).show()
+            }
+        })
+        return null
     }
 
     private fun setUpViewPager() {

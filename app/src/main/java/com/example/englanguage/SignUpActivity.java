@@ -35,8 +35,6 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-
-
 //        SignUpModel signUpModel = new SignUpModel("hvna28888@gmail.com", "12345678", "na", "12345678");
 //        livedata.mSignUp.postValue(signUpModel);
 
